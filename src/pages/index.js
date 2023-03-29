@@ -1,5 +1,13 @@
-import Home from '../src/components/Home'
+import Home from '@/components/Home'
+import Head from 'next/head'
 
 export default function Index() {
-  return <Home />
+  return (
+    <>
+      <Head />
+      <main>
+        <Home />
+      </main>
+    </>
+  )
 }
