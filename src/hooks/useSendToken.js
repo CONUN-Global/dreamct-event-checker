@@ -3,11 +3,8 @@ import axios from 'axios'
 
 const sendToken = async (token) => {
   try {
-    const response = await axios.post(
-      'https://your-backend-server.com/api/endpoint',
-      {
-        token,
-      }
+    const response = await axios.get(
+      `http://3.36.111.110:8080/api/partners/getCode?token=${token}`
     )
 
     return response.data
@@ -16,6 +13,6 @@ const sendToken = async (token) => {
   }
 }
 
-export const useSendToken = () => {
-  return useMutation(sendToken)
+export const useSendToken = (token) => {
+  return useMutation(() => sendToken(token))
 }

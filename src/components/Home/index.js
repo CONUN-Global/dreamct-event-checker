@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSendToken } from '@/hooks/useSendToken'
@@ -20,7 +20,9 @@ export default function Home() {
   const router = useRouter()
   const dispatch = useDispatch()
   const token = useSelector((state) => state.token)
-  const mutation = useSendToken()
+  const mutation = useSendToken(token)
+  const [hasClicked, setHasClicked] = useState(false)
+  const [message, setMessage] = useState('')
 
   const springs = useSprings(
     iconsConfig.length,
@@ -44,13 +46,16 @@ export default function Home() {
 
   const handleClick = async () => {
     if (!token) return
+    setHasClicked(true)
     try {
       await mutation.mutateAsync(token)
-      // Handle successful token submission, e.g., show a success message
+      setMessage('Success! Your token has been submitted.')
     } catch (error) {
-      // Handle token submission error, e.g., show an error message
+      setMessage('Error! Failed to submit your token.')
     }
   }
+
+  console.log('data: ', mutation)
 
   return (
     <div className={styles.container}>
@@ -137,8 +142,14 @@ export default function Home() {
         {/* Third div block */}
         <div className={styles.block3}>
           <div className={styles.block3Item1}>나의 응모코드</div>
-          <div className={styles.block3Item2}>
-            <p>HOEPZ7</p>
+          <div className={styles.block3Item2} onClick={() => handleClick()}>
+            <p>
+              {mutation.isLoading
+                ? 'Loading...'
+                : hasClicked
+                ? mutation.data
+                : 'Get Code'}
+            </p>
             <Image
               src="/copy-icon.svg"
               alt="Copy Icon"
@@ -147,6 +158,7 @@ export default function Home() {
               className={styles.copyIcon}
             />
           </div>
+          {message && <p className={styles.message}>{message}</p>}
           <div className={styles.block3Item3}>
             - <span>싸이월드 회원에 한 해</span> 1만 명 선착순 지급 <br /> -
             응모코드를 복사 혹은 캡처 후 메타콘 지갑을 설치하여 응모코인을
